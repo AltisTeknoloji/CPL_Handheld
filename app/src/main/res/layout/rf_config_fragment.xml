@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".MainActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_marginTop="100dp">
+
+        <!--DUTY-->
+        <LinearLayout android:layout_width="match_parent"
+            android:layout_height="45dip"
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/duty_edit"
+                android:layout_width="match_parent"
+                android:layout_height="51dp"
+                android:layout_gravity="fill"
+                android:layout_weight="1.2"
+                android:inputType="numberDecimal"
+                android:textSize="14sp"
+                android:maxLines="1"/>
+
+            <Button
+                android:id="@+id/set_duty_button"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_gravity="fill"
+                android:layout_weight="1"
+                android:text="@string/set_duty_str"
+                android:textAllCaps="false"
+                android:textSize="12sp"
+                android:maxLines="1"/>
+
+
+        </LinearLayout>
+
+        <!--RF POWER-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="45dip"
+            android:orientation="horizontal"
+            android:layout_marginTop="8dp">
+
+            <EditText
+                android:id="@+id/power_edit"
+                android:layout_width="match_parent"
+                android:layout_height="51dp"
+                android:layout_gravity="fill"
+                android:layout_weight="1.2"
+                android:inputType="numberDecimal"
+                android:textSize="14sp"
+                android:maxLines="1"/>
+
+            <Button
+                android:id="@+id/set_power_button"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_gravity="fill"
+                android:layout_weight="1"
+                android:text="@string/set_power_str"
+                android:textAllCaps="false"
+                android:textSize="12sp"/>
+
+
+        </LinearLayout>
+
+        <!--RF MODE-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="45dip"
+            android:orientation="horizontal"
+            android:layout_marginTop="8dp">
+
+            <EditText
+                android:id="@+id/rfmode_edit"
+                android:layout_width="match_parent"
+                android:layout_height="51dp"
+                android:layout_weight="1.2"
+                android:inputType="numberDecimal"
+                android:textSize="14sp"
+                android:maxLines="1"/>
+
+            <Button
+                android:id="@+id/set_rfmode_button"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_gravity="fill"
+                android:layout_weight="1"
+                android:text="@string/set_rfmode_str"
+                android:textAllCaps="false"
+                android:textSize="12sp"/>
+
+        </LinearLayout>
+
+        <!--RF MODE-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="45dip"
+            android:orientation="horizontal"
+            android:layout_marginTop="8dp">
+
+            <EditText
+                android:id="@+id/rfmask_edit"
+                android:layout_width="match_parent"
+                android:layout_height="51dp"
+                android:layout_weight="1.2"
+                android:textSize="14sp"
+                android:inputType="text"
+                android:maxLines="1"/>
+
+            <Button
+                android:id="@+id/set_rfmask_button"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_gravity="fill"
+                android:layout_weight="1"
+                android:text="@string/set_rfmask_str"
+                android:textAllCaps="false"
+                android:textSize="12sp"/>
+
+        </LinearLayout>
+
+        <!--
+
+        <LinearLayout android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+            <Spinner
+                android:id="@+id/toggle_spin"
+                android:layout_width="100dp"
+                android:layout_height="48dp"
+                android:layout_gravity="fill"
+                android:textSize="10sp"
+                />
+
+            <Button
+                android:id="@+id/bt_set_toggle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="fill"
+                android:layout_weight="1"
+                android:text="@string/set_toggle_str"
+                android:textSize="10sp"/>
+
+            <Button
+                android:id="@+id/bt_get_toggle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="fill"
+                android:layout_weight="1"
+                android:text="@string/get_toggle_str"
+                android:textSize="10sp"/>
+
+        </LinearLayout>
+
+        <LinearLayout android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+            <Spinner
+                android:id="@+id/rssi_spin"
+                android:layout_width="100dp"
+                android:layout_height="48dp"
+                android:layout_gravity="fill"
+                android:textSize="10sp"
+                />
+
+            <Button
+                android:id="@+id/bt_set_rssi"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="fill"
+                android:layout_weight="1"
+                android:text="@string/set_rssi_str"
+                android:textSize="10sp"/>
+
+            <Button
+                android:id="@+id/bt_get_rssi"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="fill"
+                android:layout_weight="1"
+                android:text="@string/get_rssi_str"
+                android:textSize="10sp"/>
+
+        </LinearLayout>
+        -->
+
+    </LinearLayout>
+
+</LinearLayout>

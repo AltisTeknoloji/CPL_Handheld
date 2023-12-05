@@ -1,0 +1,14 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".MainActivity">
+
+    <item
+        android:id="@+id/action_connected"
+        android:icon="@drawable/connection_white_64px"
+        android:orderInCategory="100"
+        android:visible="false"
+        android:title="@string/connected_str"
+        app:showAsAction="ifRoom|collapseActionView" />
+
+</menu>
