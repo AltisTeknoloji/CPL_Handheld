@@ -3,6 +3,7 @@ package com.altistek.cpl_handheld.fragment;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -20,6 +21,7 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.Switch;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -39,6 +41,8 @@ import org.json.JSONObject;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import co.kr.bluebird.sled.Reader;
@@ -81,6 +85,7 @@ public class TransferFragment extends Fragment {
     public static TransferFragment newInstance() {
         return new TransferFragment();
     }
+    private String sortedData;
 
 
     @Nullable
@@ -88,6 +93,7 @@ public class TransferFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         //return super.onCreateView(inflater, container, savedInstanceState);
         View v = inflater.inflate(R.layout.transfer_fragment, container, false);
+
         mContext = inflater.getContext();
         mOptionHandler = ((MainActivity) getActivity()).mUpdateConnectHandler;
         logger = new Logger();
@@ -111,7 +117,6 @@ public class TransferFragment extends Fragment {
 
         mAdapter = new TagListAdapter(mContext);
         mRfidList.setAdapter(mAdapter);
-
 
 
 
@@ -183,6 +188,7 @@ public class TransferFragment extends Fragment {
                     startReader();
                 });
         dialogForWorkMode = alertBuilder.create();
+
         //dialogForWorkMode.show();
         //endregion
         return v;
@@ -306,6 +312,7 @@ public class TransferFragment extends Fragment {
                 case R.id.clear_button:
                     clearAll();
                     //updateCompleteButtonText();
+                    updateUIWithPalletCount();
                     break;
             }
 
@@ -369,10 +376,10 @@ public class TransferFragment extends Fragment {
         {
 
             JSONArray jsonArray = new JSONArray();
-        for (int i = 0; i < mRfidList.getCount(); i++) {
+        /*for (int i = 0; i < mRfidList.getCount(); i++) {
             Log.d(TAG, "Pallet list madapter barcode: " + mAdapter.getBarcode(i));
             Pallet pallet = new Pallet(mAdapter.getBarcode(i), mAdapter.getEPC(i), -1, "0", "0", "0", "0", "0", "0","0");
-            logger.addRecordToLog(Logger.LogType.INFO, TAG, "Transfer operation pallet: " + pallet.toString());
+            logger.addRecordToLog(Logger.LogType.INFO, TAG, "Transfer operation pallet: " + pallet.toString());*/
 
 
 //            mp.put("barcode","");
@@ -396,24 +403,54 @@ public class TransferFragment extends Fragment {
                 obj.put("WC", String.valueOf(mAdapter.getCount()));
                 jsonArray.put(obj);
             }
-        }
+        //}
             apiServiceOkHttp = new ApiServiceOkHttp();
             Response result = apiServiceOkHttp.POSTArray("/Handheld/Handheld", jsonArray);
             if (result != null) {
                 int responceCode = result.code();
                 if (responceCode==400) {
-
-                    Toast.makeText(mContext, "Bu kapıda iş emri başlatılmamıştır.", Toast.LENGTH_SHORT).show();
-                } else {
-
-                    Toast.makeText(mContext, R.string.pallets_saved, Toast.LENGTH_SHORT).show();
+                    new AlertDialog.Builder(mContext)
+                            .setTitle("Hata")
+                            .setMessage("Bu kapıda iş emri başlatılmamıştır.")
+                            .setPositiveButton("Tamam", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                }
+                            })
+                            .show();
                 }
-            } else {
+                else {
+                    // Uyarı mesajını oluştur
+                    AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+                    builder.setTitle("Uyarı");
+                    builder.setMessage(mContext.getString(R.string.pallets_saved));
 
-                Toast.makeText(mContext, "API'den geçersiz yanıt alındı", Toast.LENGTH_SHORT).show();
+                    builder.setPositiveButton("Tamam", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            // Uyarıyı kapat
+                            dialog.dismiss();
+
+                            updateUIWithPalletCount();
+                        }
+                    });
+                    AlertDialog alertDialog = builder.create();
+                    alertDialog.show();
+                }
+            }
+            else
+            {
+                new AlertDialog.Builder(mContext)
+                        .setTitle("Hata")
+                        .setMessage("API'den geçersiz yanıt alındı")
+                        .setPositiveButton("Tamam", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        })
+                        .show();
             }
         logger.addRecordToLog(Logger.LogType.INFO, TAG, "Transfer operation completed.(IN_COMPANY)");
-        clearAll();
+        //clearAll();
         //updateCompleteButtonText();
         //dialogForWorkMode.show();
     }catch (Exception ex) {
@@ -553,12 +590,13 @@ public class TransferFragment extends Fragment {
         }
 
         Log.d(TAG, "DATA :  " + data);
-
+        sortedData = sortData(data);
 
         Grai grai = new Grai(data, Grai.Tag.EPC);
         mAdapter.addItem(grai.getBarcode(), data, true);
         mRfidList.setSelection(mRfidList.getAdapter().getCount() - 1);
         //updateCompleteButtonText();
+        updateUIWithPalletCount();
     }
 
     private void processReadDataCustom(String data) {
@@ -591,11 +629,46 @@ public class TransferFragment extends Fragment {
             if (activity != null)
                 rssi = activity.getString(R.string.rssi_str) + rssi;
         }
+        sortedData = sortData(data);
         Grai grai = new Grai(data, Grai.Tag.EPC);
         mAdapter.addItem(grai.getBarcode(), data, true);
         mRfidList.setSelection(mRfidList.getAdapter().getCount() - 1);
+        updateUIWithPalletCount();
+
     }
+    private String sortData(String data) {
+        String numericPart = data.substring(data.indexOf('B') + 1);
+
+        String[] numericStrings = numericPart.split("\\D+");
+
+        List<Integer> numericList = new ArrayList<>();
+        for (String numericString : numericStrings) {
+            if (!numericString.isEmpty()) {
+                numericList.add(Integer.parseInt(numericString));
+            }
+        }
+        Collections.sort(numericList);
+
+        StringBuilder sortedData = new StringBuilder();
+        sortedData.append(data, 0, data.indexOf('B') + 1);
+        for (int numericValue : numericList) {
+            sortedData.append(numericValue);
+        }
+
+        return sortedData.toString();
+    }
+
     //endregion
+    private void updateUIWithPalletCount() {
+        int palletCount = mAdapter.getCount();
+        TextView palletCountView = getView().findViewById(R.id.pallet_count_view);
+
+        if (palletCount == 0) {
+            palletCountView.setText("0 Palet Okundu");
+        } else {
+            palletCountView.setText(String.valueOf(palletCount) + " Palet Okundu.");
+        }
+    }
 
     //region BARCODE HANDLER
     private static class BarcodeHandler extends Handler {
@@ -646,6 +719,32 @@ public class TransferFragment extends Fragment {
                     }
                     if (m.obj != null && m.obj instanceof String) {
                         //readData.append("\n" + m.obj.toString());
+                        String fullData = m.obj.toString();
+
+                        // Extract the barcode value from the full data string
+                        String barcodeValue = fullData.split(";")[0];
+
+
+                        // Check if the barcode has 26 characters
+                        if (barcodeValue.length() != 26) {
+                            Log.d(TAG, "Skipping barcode with invalid length: " + barcodeValue);
+
+                            // Create an AlertDialog
+                            AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+                            builder.setMessage("Geçersiz barkod uzunluğu: " + barcodeValue.length())
+                                    .setPositiveButton("Tamam", new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int id) {
+
+                                            dialog.dismiss();
+                                        }
+                                    });
+
+
+                            AlertDialog alertDialog = builder.create();
+                            alertDialog.show();
+
+                            return;
+                        }
                         Log.d(TAG, "Barcode is " + m.obj.toString());
                         String tmp[] = m.obj.toString().split(";");
                         Grai grai = new Grai(tmp[0], Grai.Tag.BARCODE);
@@ -656,6 +755,7 @@ public class TransferFragment extends Fragment {
                             //MyToast.showToast(mContext,getString(R.string.barcode_already_listed),Toast.LENGTH_SHORT);
                         else {
                             //updateCompleteButtonText();
+                            updateUIWithPalletCount();
                         }
                     }
                 } else if (m.arg1 == SDConsts.BCCmdMsg.BARCODE_ERROR) {
@@ -668,6 +768,7 @@ public class TransferFragment extends Fragment {
                     }
                 }
                 break;
+
         }
     }
     //endregion

@@ -13,11 +13,11 @@
         android:layout_marginBottom="5dp"
         android:orientation="vertical">
 
-        <Spinner
+        <!--<Spinner
             android:id="@+id/spinner_warehouses"
             android:layout_width="match_parent"
             android:layout_height="40dp"
-            android:prompt="@string/target_warehouse" />
+            android:prompt="@string/target_warehouse" />-->
 
 
     </LinearLayout>
@@ -105,7 +105,24 @@
 
 
     </LinearLayout>
+    <LinearLayout
 
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+
+            android:id="@+id/pallet_count_view"
+            android:layout_width="match_parent"
+            android:layout_height="35dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:textColor="@color/green"
+            android:textSize="45px"
+            android:text= "" />
+
+
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
